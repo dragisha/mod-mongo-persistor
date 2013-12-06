@@ -47,6 +47,7 @@ public class MongoPersistor extends BusModBase implements Handler<Message<JsonOb
   protected String username;
   protected String password;
   protected boolean autoConnectRetry;
+  protected boolean useObjectIds;
   protected int socketTimeout;
   protected boolean useSSL;
 
@@ -66,6 +67,7 @@ public class MongoPersistor extends BusModBase implements Handler<Message<JsonOb
     password = getOptionalStringConfig("password", null);
     int poolSize = getOptionalIntConfig("pool_size", 10);
     autoConnectRetry = getOptionalBooleanConfig("auto_connect_retry", true);
+    useObjectIds = getOptionalBooleanConfig("use_objectids", true);
     socketTimeout = getOptionalIntConfig("socket_timeout", 60000);
     useSSL = getOptionalBooleanConfig("use_ssl", false);
 
@@ -183,12 +185,14 @@ public class MongoPersistor extends BusModBase implements Handler<Message<JsonOb
     if (doc == null) {
       return;
     }
-    String genID;
-    if (doc.getField("_id") == null) {
-      genID = UUID.randomUUID().toString();
-      doc.putString("_id", genID);
-    } else {
-      genID = null;
+    String genID = null;
+    if (!useObjectIds) {
+      if (doc.getField("_id") == null) {
+        genID = UUID.randomUUID().toString();
+        doc.putString("_id", genID);
+      } else {
+        genID = null;
+      }
     }
     DBCollection coll = db.getCollection(collection);
     DBObject obj = jsonToDBObject(doc);

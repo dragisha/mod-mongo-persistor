@@ -48,6 +48,7 @@ Let's take a look at each field in turn:
 * `pool_size` The number of socket connections the module instance should maintain to the MongoDB server. Default is 10.
 * `fake` If true then a fake in memory Mongo DB server is used instead (using Fongo). Useful for testing!
 * `use_ssl` enable SSL based connections.  See http://docs.mongodb.org/manual/tutorial/configure-ssl/ for more details. Defaults to `false`.
+* `use_objectids` let MongoDB create unique _id for new objects. This is default. Set it to false to use more efficient simple UUID for _id.
 
 ### Replsets or sharding
 
